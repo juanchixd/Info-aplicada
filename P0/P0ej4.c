@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-double ** Introducir(int *, int *);
+double ** Introducir(int *, int *, int);
 
 int menu(){
 	int opc;
@@ -33,7 +33,7 @@ int menu(){
 	return opc;
 }
 
-double ** Introducir (int *f, int *c){
+double ** Introducir (int *f, int *c, int con){
     double **matriz;
     int i, j, cond = 0;
     while(cond != 1){
@@ -41,8 +41,11 @@ double ** Introducir (int *f, int *c){
     	scanf ("%d",f);
     	printf ("\nIndique numero de columnas:");
     	scanf ("%d",c);
-    	if (*f < 1 || *c < 1){
-    		printf("INGRESE UN TAMAÑO VALIDO\n");
+    	if (*f == 0 || *c == 0){
+    		break;
+    	}
+    	else if (*f < 1 || *c < 1){
+    		printf("INGRESE UN TAMAÑO VALIDO O 0 PARA SALIR\n");
     	}
     	else{
     		cond = 1;
@@ -52,11 +55,21 @@ double ** Introducir (int *f, int *c){
     for (i=0 ; i<*f ; i++) {
     	matriz[i] = (double *)calloc(*c,sizeof(double));
     }
-    for (i=0 ; i<*f ; i++) {
-        for (j=0 ; j<*c ; j++) {
-            printf ("\nIntroduzca valor de la posición %d - %d: ",i+1,j+1);
-            scanf("%lf",&matriz[i][j]);
-        }
+    if (con == 0){
+    	for (i=0 ; i<*f ; i++) {
+        	for (j=0 ; j<*c ; j++) {
+            	printf ("\nIntroduzca valor de la posición %d - %d: ",i+1,j+1);
+            	scanf("%lf",&matriz[i][j]);
+        	}
+    	}
+    }
+    else{
+    	for (i=0 ; i<*c ; i++) {
+          	for (j=0 ; j<*f ; j++) {
+    	       	printf ("\nIntroduzca valor de la posición %d - %d: ",i+1,j+1);
+    	       	scanf("%lf",&matriz[j][i]);
+    	   	}
+    	}
     }
     return matriz;
 }
@@ -83,16 +96,13 @@ void eja(){
 }
 
 void ejb(){
-	int f=0, c=0, j, i;
+	int f=0, c=0, j, i, con = 1;
 	double **matriz;
 	while(f < 1 || c < 1){
-		matriz = Introducir(&f, &c);
+		matriz = Introducir(&f, &c, con);
 		printf("\n");
-		if (f == 0 || c == 1){
+		if (f == 0 || c == 0){
 			break;
-		}
-		else if(f < 1 || c < 1){
-			printf("INGRESE UN VALOR VALIDO O 0 PARA SALIR");
 		}
 	}
 	printf("\nMatriz original");
@@ -111,16 +121,19 @@ void ejb(){
 		}
 		printf("|");
 	}
+	for(int i = 0; i < f; i++){
+		free(matriz[i]);
+	}
 	free(matriz);
 }
 
 void ejc(){
-	int f1, f2, c1, c2, j, i, cond = 0;
+	int f1, f2, c1, c2, j, i, cond = 0, con = 1;
 	double valor;
 	double **matriz1, **matriz2, **matriz;
 	while(cond != 1){
-		matriz1 = Introducir(&f1, &c1);
-		matriz2 = Introducir(&f2, &c2);
+		matriz1 = Introducir(&f1, &c1, con);
+		matriz2 = Introducir(&f2, &c2, con);
 		if (f1 == 0 || f2 == 0 || c1 == 0 || c2 == 0){
 			break;
 		}
@@ -154,6 +167,13 @@ void ejc(){
 			printf("%lf\t",matriz[i][j]);
 		}
 		printf("|");
+	}
+	for(int i = 0; i < f1; i++) {
+	    free(matriz1[i]);
+	    free(matriz[i]);
+	}
+	for(int i = 0; i < f2; i++){
+		free(matriz2[i]);
 	}
 	free(matriz1);
 	free(matriz2);
